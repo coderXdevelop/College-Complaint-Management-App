@@ -44,34 +44,41 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
-        String email = jwtUtil.extractEmail(token);
+        try {
+            String email = jwtUtil.extractEmail(token);
 
-        if (email != null &&
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication() == null) {
+            if (email != null &&
+                    SecurityContextHolder
+                            .getContext()
+                            .getAuthentication() == null) {
 
-            UserDetails userDetails =
-                    userDetailsService
-                            .loadUserByUsername(email);
+                UserDetails userDetails =
+                        userDetailsService
+                                .loadUserByUsername(email);
 
-            if (jwtUtil.validateToken(token)) {
+                if (jwtUtil.validateToken(token)) {
 
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
+                    UsernamePasswordAuthenticationToken auth =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
 
-                auth.setDetails(
-                        new WebAuthenticationDetailsSource()
-                                .buildDetails(request));
+                    auth.setDetails(
+                            new WebAuthenticationDetailsSource()
+                                    .buildDetails(request));
 
-                SecurityContextHolder
-                        .getContext()
-                        .setAuthentication(auth);
+                    SecurityContextHolder
+                            .getContext()
+                            .setAuthentication(auth);
+                }
             }
+        } catch (Exception e) {
+            // Ignore authentication failures during filter processing.
+            // If the endpoint is public (like login/register), it should proceed anyway.
+            // If the endpoint is private, Spring Security's authorization checker will block it.
+            logger.warn("JWT authentication processing failed: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);
