@@ -56,7 +56,7 @@ const getRoleFromDecoded = (decoded) => {
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem('token') || null);
   const [user, setUser] = useState(null);
-  const [role, setRole] = useState(null);
+  const [role, setRole] = useState(() => localStorage.getItem('role') || null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -70,8 +70,13 @@ export const AuthProvider = ({ children }) => {
           logout();
         } else {
           setUser(decoded);
-          const detectedRole = getRoleFromDecoded(decoded);
-          setRole(detectedRole);
+          const storedRole = localStorage.getItem('role');
+          if (storedRole) {
+            setRole(storedRole);
+          } else {
+            const detectedRole = getRoleFromDecoded(decoded);
+            setRole(detectedRole);
+          }
         }
       } else {
         // Invalid token format
@@ -87,15 +92,14 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await API.post('/api/auth/login', { email, password });
-      const { token: jwtToken } = response.data;
+      const { token: jwtToken, role: userRole } = response.data;
       
       localStorage.setItem('token', jwtToken);
+      localStorage.setItem('role', userRole);
       setToken(jwtToken);
+      setRole(userRole);
       
-      const decoded = decodeToken(jwtToken);
-      const detectedRole = getRoleFromDecoded(decoded);
-      
-      return { success: true, role: detectedRole, message: response.data.message };
+      return { success: true, role: userRole, message: response.data.message };
     } catch (error) {
       console.error('Login error:', error);
       const errorMsg = error.response?.data?.message || 'Login failed. Please check your credentials.';
@@ -106,15 +110,14 @@ export const AuthProvider = ({ children }) => {
   const register = async (name, email, password) => {
     try {
       const response = await API.post('/api/auth/register', { name, email, password, role: 'STUDENT' });
-      const { token: jwtToken } = response.data;
+      const { token: jwtToken, role: userRole } = response.data;
       
       localStorage.setItem('token', jwtToken);
+      localStorage.setItem('role', userRole);
       setToken(jwtToken);
+      setRole(userRole);
       
-      const decoded = decodeToken(jwtToken);
-      const detectedRole = getRoleFromDecoded(decoded);
-      
-      return { success: true, role: detectedRole, message: response.data.message };
+      return { success: true, role: userRole, message: response.data.message };
     } catch (error) {
       console.error('Registration error:', error);
       const errorMsg = error.response?.data?.message || 'Registration failed. Please check your inputs.';
@@ -124,6 +127,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('role');
     setToken(null);
     setUser(null);
     setRole(null);

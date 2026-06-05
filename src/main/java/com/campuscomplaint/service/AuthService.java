@@ -24,18 +24,20 @@ public class AuthService {
             throw new RuntimeException("Email already exists");
         }
 
+        com.campuscomplaint.enums.Role role = request.getRole() != null ? request.getRole() : com.campuscomplaint.enums.Role.STUDENT;
+
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .role(role)
                 .build();
 
         userRepository.save(user);
 
         String token = jwtUtil.generateToken(user.getEmail());
 
-        return new AuthResponse(token, "Registration Successful");
+        return new AuthResponse(token, "Registration Successful", user.getRole().name());
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -53,6 +55,6 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(user.getEmail());
 
-        return new AuthResponse(token, "Login Successful");
+        return new AuthResponse(token, "Login Successful", user.getRole().name());
     }
 }

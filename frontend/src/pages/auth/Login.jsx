@@ -136,11 +136,7 @@ const Login = () => {
               )}
             </div>
 
-            {/* Quick Demo Help Alert */}
-            <div className="rounded-lg bg-blue-50/50 border border-blue-100 p-3 text-xs text-blue-800">
-              <span className="font-semibold block mb-0.5">Faculty Demo Account:</span>
-              Use any email containing <code className="bg-white px-1 py-0.5 rounded font-mono font-bold text-blue-700 border border-blue-200">faculty</code> to login as Faculty (e.g., <code className="bg-white px-1 py-0.5 rounded font-mono border border-blue-200">faculty@campus.edu</code>).
-            </div>
+
 
             {/* Submit Button */}
             <div>
