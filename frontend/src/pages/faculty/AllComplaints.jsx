@@ -11,6 +11,11 @@ const AllComplaints = () => {
   const [loading, setLoading] = useState(true);
   const [complaints, setComplaints] = useState([]);
   
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [pageSize] = useState(10);
+  
   // Search and Filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -22,21 +27,31 @@ const AllComplaints = () => {
   const [remarksInput, setRemarksInput] = useState('');
   const [modalSubmitting, setModalSubmitting] = useState(false);
 
-  const fetchComplaints = async () => {
+  const fetchComplaints = async (page = 0) => {
     setLoading(true);
     try {
-      const response = await API.get('/api/faculty/complaints');
-      setComplaints(response.data || []);
+      const response = await API.get(`/api/faculty/complaints?page=${page}&size=${pageSize}`);
+      const pageData = response.data;
+      if (pageData && Array.isArray(pageData.content)) {
+        setComplaints(pageData.content);
+        setTotalPages(pageData.totalPages || 0);
+        setCurrentPage(page);
+      } else {
+        setComplaints(Array.isArray(pageData) ? pageData : []);
+        setTotalPages(0);
+        setCurrentPage(0);
+      }
     } catch (error) {
       console.error('Error fetching faculty complaints:', error);
       toast.error('Failed to fetch complaints.');
+      setComplaints([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchComplaints();
+    fetchComplaints(0);
   }, []);
 
   const openUpdateModal = (complaint) => {
@@ -116,7 +131,7 @@ const AllComplaints = () => {
           <p className="text-sm text-slate-500 mt-1">Review, assign, and update reported campus incidents</p>
         </div>
         <button
-          onClick={fetchComplaints}
+          onClick={() => fetchComplaints(0)}
           disabled={loading}
           className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-all active:scale-95 disabled:opacity-50"
         >
@@ -239,6 +254,74 @@ const AllComplaints = () => {
                 ))}
               </tbody>
             </table>
+            
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+                <div className="flex flex-1 justify-between sm:hidden">
+                  <button
+                    onClick={() => fetchComplaints(Math.max(0, currentPage - 1))}
+                    disabled={currentPage === 0}
+                    type="button"
+                    className="relative inline-flex items-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={() => fetchComplaints(Math.min(totalPages - 1, currentPage + 1))}
+                    disabled={currentPage === totalPages - 1}
+                    type="button"
+                    className="relative ml-3 inline-flex items-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
+                <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-xs text-slate-500 font-medium">
+                      Showing page <span className="font-semibold text-slate-900">{currentPage + 1}</span> of{' '}
+                      <span className="font-semibold text-slate-900">{totalPages}</span> pages
+                    </p>
+                  </div>
+                  <div>
+                    <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                      <button
+                        onClick={() => fetchComplaints(Math.max(0, currentPage - 1))}
+                        disabled={currentPage === 0}
+                        type="button"
+                        className="relative inline-flex items-center rounded-l-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-50 focus:z-20 disabled:opacity-50"
+                      >
+                        Previous
+                      </button>
+                      
+                      {Array.from({ length: totalPages }).map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => fetchComplaints(idx)}
+                          type="button"
+                          className={`relative inline-flex items-center px-4 py-2 text-xs font-semibold border-t border-b focus:z-20 ${
+                            currentPage === idx
+                              ? 'z-10 bg-primary border-primary text-white'
+                              : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                          }`}
+                        >
+                          {idx + 1}
+                        </button>
+                      ))}
+
+                      <button
+                        onClick={() => fetchComplaints(Math.min(totalPages - 1, currentPage + 1))}
+                        disabled={currentPage === totalPages - 1}
+                        type="button"
+                        className="relative inline-flex items-center rounded-r-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-50 focus:z-20 disabled:opacity-50"
+                      >
+                        Next
+                      </button>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

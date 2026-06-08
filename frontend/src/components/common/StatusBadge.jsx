@@ -21,6 +21,12 @@ const StatusBadge = ({ status }) => {
       dot: 'bg-emerald-500',
       label: 'Resolved'
     };
+  } else if (normalizedStatus === 'REJECTED') {
+    styles = {
+      bg: 'bg-red-50 text-red-700 border-red-200/60',
+      dot: 'bg-red-500',
+      label: 'Rejected'
+    };
   }
 
   return (
