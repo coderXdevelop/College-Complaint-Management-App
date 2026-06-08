@@ -1,30 +1,71 @@
 package com.campuscomplaint.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    private final RestTemplate restTemplate;
+
+    @Value("${BREVO_API_KEY:}")
+    private String apiKey;
+
+    @Value("${brevo.sender.email}")
+    private String senderEmail;
+
+    @Value("${brevo.sender.name}")
+    private String senderName;
+
+    public EmailService() {
+        this.restTemplate = new RestTemplate();
+    }
 
     public void sendNotificationEmail(String toEmail, String subject, String message) {
-        try {
-            SimpleMailMessage email = new SimpleMailMessage();
-            email.setTo(toEmail);
-            email.setSubject(subject);
-            email.setText(message);
-            email.setFrom("noreply@campuscomplaint.com"); // replace with your sender email
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            log.warn("Brevo API key is not configured. Email to {} was not sent. Content: {}", toEmail, message);
+            return;
+        }
 
-            mailSender.send(email);
-            log.info("Email sent to: {}", toEmail);
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("api-key", apiKey);
+            headers.set("accept", "application/json");
+
+            Map<String, Object> body = new HashMap<>();
+            body.put("sender", Map.of("email", senderEmail, "name", senderName));
+            body.put("to", List.of(Map.of("email", toEmail)));
+            body.put("subject", subject);
+            body.put("textContent", message);
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+
+            ResponseEntity<String> response = restTemplate.postForEntity(
+                    "https://api.brevo.com/v3/smtp/email",
+                    entity,
+                    String.class
+            );
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                log.info("Email sent successfully to {} via Brevo API.", toEmail);
+            } else {
+                log.error("Failed to send email to {} via Brevo. Status: {}, Response: {}", 
+                        toEmail, response.getStatusCode(), response.getBody());
+            }
         } catch (Exception e) {
-            log.error("Failed to send email to {}: {}", toEmail, e.getMessage());
+            log.error("Failed to send email to {} via Brevo API: {}", toEmail, e.getMessage());
             // Don't throw — if email fails, notification is still saved in DB
         }
     }
