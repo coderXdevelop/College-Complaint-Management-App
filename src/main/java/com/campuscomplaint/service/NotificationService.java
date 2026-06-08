@@ -117,11 +117,24 @@ public class NotificationService {
         }
     }
 
-    public void notifyFeedbackSubmitted(Long complaintId) {
+    public void notifyFeedbackSubmitted(String complaintTitle, Long complaintId, Integer rating, String comments) {
         List<User> faculty = userRepository.findByRole(Role.FACULTY);
-        String message = "Feedback submitted for complaint #" + complaintId;
+        String message = "Feedback submitted for complaint #" + complaintId + ": " + complaintTitle + " (Rating: " + rating + "/5)";
+
         for (User u : faculty) {
-            createNotification(u, message);
+            Notification n = Notification.builder()
+                    .user(u)
+                    .message(message)
+                    .readFlag(false)
+                    .build();
+            notificationRepository.save(n);
+
+            try {
+                emailService.sendFeedbackSubmittedEmail(u.getEmail(), complaintTitle, complaintId, rating, comments);
+                log.info("Formatted feedback submission email sent to faculty: {}", u.getEmail());
+            } catch (Exception e) {
+                log.warn("Email send failed for faculty {}: {}", u.getEmail(), e.getMessage());
+            }
         }
     }
 

@@ -55,7 +55,7 @@ public class FeedbackService {
 
         // Notify faculty after successful save. If notification fails, log it but do not roll back feedback.
         try {
-            notificationService.notifyFeedbackSubmitted(complaint.getId());
+            notificationService.notifyFeedbackSubmitted(complaint.getTitle(), complaint.getId(), saved.getRating(), saved.getComments());
         } catch (Exception e) {
             log.error("Failed to notify faculty about submitted feedback for complaint {}: {}", complaint.getId(), e.getMessage(), e);
         }
