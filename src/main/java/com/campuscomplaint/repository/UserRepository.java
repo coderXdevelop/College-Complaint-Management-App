@@ -1,8 +1,10 @@
 package com.campuscomplaint.repository;
 
 import com.campuscomplaint.entity.User;
+import com.campuscomplaint.enums.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -10,4 +12,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     boolean existsByEmail(String email);
+
+    // new helper to find faculty/admin users
+    List<User> findByRole(Role role);
 }

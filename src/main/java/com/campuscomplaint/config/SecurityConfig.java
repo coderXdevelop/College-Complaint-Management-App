@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
@@ -42,7 +44,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
-                                "/h2-console/**" // allow H2 console access
+                                "/h2-console/**"
                         ).permitAll()
 
                         .anyRequest()
@@ -54,7 +56,6 @@ public class SecurityConfig {
                         UsernamePasswordAuthenticationFilter.class
                 );
 
-        // Required to allow H2 Console frame layout display
         http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
 
         return http.build();
@@ -67,7 +68,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -82,7 +83,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config)
             throws Exception {
-
         return config.getAuthenticationManager();
     }
 }
