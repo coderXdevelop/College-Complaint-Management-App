@@ -87,7 +87,7 @@ const StudentComplaintDetails = () => {
           >
             <Star
               className={`h-5 w-5 ${
-                star <= count ? 'text-amber-400 fill-amber-400' : 'text-slate-200 fill-slate-100'
+                star <= count ? 'text-amber-400 fill-amber-400' : 'text-slate-200 dark:text-slate-800 fill-slate-100 dark:fill-slate-900'
               }`}
             />
           </button>
@@ -107,14 +107,14 @@ const StudentComplaintDetails = () => {
   if (error || !complaint) {
     return (
       <div className="max-w-md mx-auto text-center py-12 space-y-4">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600 border border-red-100">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/40">
           <AlertTriangle className="h-6 w-6" />
         </div>
-        <h2 className="text-lg font-bold text-slate-900">Error Loading Details</h2>
-        <p className="text-sm text-slate-500">{error || 'Complaint not found.'}</p>
+        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Error Loading Details</h2>
+        <p className="text-sm text-slate-500 dark:text-slate-400">{error || 'Complaint not found.'}</p>
         <button
           onClick={() => navigate('/student/complaints')}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary dark:text-primary-400 hover:underline"
         >
           <ArrowLeft className="h-4 w-4" /> Back to My Complaints
         </button>
@@ -128,22 +128,22 @@ const StudentComplaintDetails = () => {
       {/* Back button */}
       <Link
         to="/student/complaints"
-        className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors"
+        className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to list
       </Link>
 
       {/* Main card */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200/60 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-3xl border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl shadow-slate-100/40 dark:shadow-slate-950/30">
         {/* Title Panel */}
-        <div className="border-b border-slate-100 bg-slate-50/50 p-6 md:p-8">
+        <div className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-6 md:p-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="space-y-2">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider bg-white px-2 py-0.5 rounded border border-slate-200">
+              <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest bg-white dark:bg-slate-950 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-800">
                 Ticket ID: #{complaint.id}
               </span>
-              <h1 className="text-xl font-bold text-slate-900 md:text-2xl mt-2">{complaint.title}</h1>
+              <h1 className="text-xl font-extrabold text-slate-900 dark:text-white md:text-2xl mt-2 tracking-tight">{complaint.title}</h1>
             </div>
             <StatusBadge status={complaint.status} />
           </div>
@@ -154,60 +154,60 @@ const StudentComplaintDetails = () => {
           {/* Left / Info & Description */}
           <div className="lg:col-span-3 space-y-6">
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Description</h3>
-              <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">{complaint.description}</p>
+              <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Description</h3>
+              <p className="text-sm text-slate-650 dark:text-slate-300 leading-relaxed whitespace-pre-wrap font-medium">{complaint.description}</p>
             </div>
 
             {/* Remarks Section */}
-            <div className="rounded-xl border border-slate-100 bg-slate-50/30 p-4">
-              <h4 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-                <MessageSquare className="h-4 w-4 text-slate-400" />
+            <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/30 p-5">
+              <h4 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
+                <MessageSquare className="h-4 w-4 text-slate-400 dark:text-slate-500" />
                 Faculty Remarks
               </h4>
-              <p className="text-sm text-slate-600 italic">
+              <p className="text-sm text-slate-600 dark:text-slate-400 italic font-medium leading-relaxed">
                 {complaint.remarks || 'No remarks provided yet by the reviewing faculty.'}
               </p>
             </div>
 
             {/* Feedback Section */}
             {complaint.status === 'RESOLVED' && (
-              <div className="rounded-xl border border-slate-200/60 bg-white p-5 shadow-sm space-y-4">
-                <div className="border-b border-slate-100 pb-3">
-                  <h4 className="text-sm font-bold text-slate-900">Resolved Ticket Feedback</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">Let us know how we resolved your request</p>
+              <div className="rounded-2xl border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-950/35 p-6 shadow-sm space-y-5">
+                <div className="border-b border-slate-100 dark:border-slate-800 pb-3">
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">Resolved Ticket Feedback</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Let us know how we resolved your request</p>
                 </div>
 
                 {loadingFeedback ? (
                   <div className="flex items-center justify-center py-4">
-                    <Loader2 className="h-6 w-6 text-primary animate-spin" />
+                    <Loader2 className="h-5 w-5 text-primary animate-spin" />
                   </div>
                 ) : feedback && feedback.status === 'SUBMITTED' ? (
-                  <div className="space-y-3 animate-fadeIn">
+                  <div className="space-y-4 animate-fadeIn">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold text-slate-500">Your Rating:</span>
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Your Rating:</span>
                       {renderStars(feedback.rating)}
                     </div>
                     <div>
-                      <span className="text-xs font-semibold text-slate-500 block mb-1">Your Comments:</span>
-                      <p className="text-sm text-slate-700 bg-slate-50 border border-slate-100 rounded-lg p-3 italic">
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">Your Comments:</span>
+                      <p className="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 p-4 italic font-medium leading-relaxed">
                         {feedback.comments || 'No comments provided.'}
                       </p>
                     </div>
-                    <div className="text-[10px] text-slate-400 font-medium">
+                    <div className="text-[10px] text-slate-400 dark:text-slate-550 font-bold uppercase tracking-wider">
                       Submitted on {feedback.updatedAt ? new Date(feedback.updatedAt).toLocaleString() : 'N/A'}
                     </div>
                   </div>
                 ) : (
-                  <form onSubmit={handleFeedbackSubmit} className="space-y-4 animate-fadeIn">
+                  <form onSubmit={handleFeedbackSubmit} className="space-y-5 animate-fadeIn">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                         Select Rating:
                       </label>
                       {renderStars(rating, true)}
                     </div>
 
                     <div>
-                      <label htmlFor="comments" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                      <label htmlFor="comments" className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
                         Comments / Suggestions
                       </label>
                       <textarea
@@ -217,9 +217,9 @@ const StudentComplaintDetails = () => {
                         value={comments}
                         onChange={(e) => setComments(e.target.value)}
                         placeholder="Provide details about your experience (e.g. prompt resolution, satisfied with the work...)"
-                        className="block w-full rounded-lg border border-slate-200 py-2 px-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
+                        className="block w-full rounded-xl border border-slate-200 dark:border-slate-800 py-3 px-4 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary dark:focus:border-primary bg-white dark:bg-slate-950 text-sm font-medium transition-all"
                       />
-                      <div className="flex justify-between mt-1 text-[10px] text-slate-400 font-medium">
+                      <div className="flex justify-between mt-1.5 text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">
                         <span>Max 2000 characters</span>
                         <span>{comments.length}/2000</span>
                       </div>
@@ -228,10 +228,10 @@ const StudentComplaintDetails = () => {
                     <button
                       type="submit"
                       disabled={submittingFeedback}
-                      className="flex items-center justify-center gap-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 text-xs font-semibold transition-all active:scale-95 disabled:opacity-75"
+                      className="flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 px-4 text-xs font-bold uppercase tracking-wider transition-all active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none cursor-pointer shadow-md shadow-emerald-600/10"
                     >
                       {submittingFeedback ? (
-                        <Loader2 className="h-4 w-4 animate-spin animate-spin-slow" />
+                        <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
                         'Submit Feedback'
                       )}
@@ -243,42 +243,50 @@ const StudentComplaintDetails = () => {
           </div>
 
           {/* Right / Meta Info & Media */}
-          <div className="lg:col-span-2 space-y-6 lg:border-l lg:border-slate-100 lg:pl-8">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Meta Details</h3>
+          <div className="lg:col-span-2 space-y-6 lg:border-l lg:border-slate-100 dark:lg:border-slate-800 lg:pl-8">
+            <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Meta Details</h3>
             
             <div className="space-y-4">
-              <div className="flex items-start gap-3 text-sm">
-                <MapPin className="h-5 w-5 text-slate-400 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3.5 text-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-500 shrink-0">
+                  <MapPin className="h-4.5 w-4.5" />
+                </div>
                 <div>
-                  <p className="font-semibold text-slate-700">Location</p>
-                  <p className="text-slate-500 text-xs mt-0.5">{complaint.location}</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none">Location</p>
+                  <p className="text-slate-800 dark:text-white text-sm font-bold mt-1.5">{complaint.location}</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 text-sm">
-                <User className="h-5 w-5 text-slate-400 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3.5 text-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-500 shrink-0">
+                  <User className="h-4.5 w-4.5" />
+                </div>
                 <div>
-                  <p className="font-semibold text-slate-700">Reporter</p>
-                  <p className="text-slate-500 text-xs mt-0.5">{complaint.studentName || 'Self'}</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none">Reporter</p>
+                  <p className="text-slate-800 dark:text-white text-sm font-bold mt-1.5">{complaint.studentName || 'Self'}</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 text-sm">
-                <Calendar className="h-5 w-5 text-slate-400 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3.5 text-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-500 shrink-0">
+                  <Calendar className="h-4.5 w-4.5" />
+                </div>
                 <div>
-                  <p className="font-semibold text-slate-700">Submitted On</p>
-                  <p className="text-slate-500 text-xs mt-0.5">
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none">Submitted On</p>
+                  <p className="text-slate-800 dark:text-white text-sm font-bold mt-1.5">
                     {complaint.createdAt ? new Date(complaint.createdAt).toLocaleString() : 'N/A'}
                   </p>
                 </div>
               </div>
 
               {complaint.updatedAt && complaint.updatedAt !== complaint.createdAt && (
-                <div className="flex items-start gap-3 text-sm">
-                  <Calendar className="h-5 w-5 text-slate-400 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3.5 text-sm">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-500 shrink-0">
+                    <Calendar className="h-4.5 w-4.5" />
+                  </div>
                   <div>
-                    <p className="font-semibold text-slate-700">Last Updated</p>
-                    <p className="text-slate-500 text-xs mt-0.5">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none">Last Updated</p>
+                    <p className="text-slate-800 dark:text-white text-sm font-bold mt-1.5">
                       {new Date(complaint.updatedAt).toLocaleString()}
                     </p>
                   </div>
@@ -288,12 +296,12 @@ const StudentComplaintDetails = () => {
 
             {/* Complaint Image */}
             {complaint.imageUrl && (
-              <div className="space-y-2">
-                <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-400">
+              <div className="space-y-3.5 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <h4 className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                   <FileImage className="h-4 w-4" />
                   Attachment
                 </h4>
-                <div className="overflow-hidden rounded-xl border border-slate-200">
+                <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm max-w-sm">
                   <img
                     src={complaint.imageUrl}
                     alt="Complaint attachment"

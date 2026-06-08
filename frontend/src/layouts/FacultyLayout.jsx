@@ -11,7 +11,7 @@ const FacultyLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-background transition-colors duration-300">
       {/* Sidebar Navigation */}
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 

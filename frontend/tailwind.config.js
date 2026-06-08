@@ -43,9 +43,6 @@ export default {
         danger: {
           DEFAULT: '#EF4444',
           600: '#dc2626',
-        },
-        background: {
-          DEFAULT: '#F8FAFC',
         }
       }
     },
