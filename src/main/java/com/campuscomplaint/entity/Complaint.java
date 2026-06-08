@@ -45,6 +45,10 @@ public class Complaint {
     @JoinColumn(name = "student_id", nullable = false)
     private User student;
 
+    public String getStudentName() {
+        return this.student != null ? this.student.getName() : null;
+    }
+
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDateTime.now();

@@ -53,6 +53,9 @@ public class ComplaintService {
         // Notify all faculty about new complaint
         notificationService.notifyComplaintCreated(savedComplaint.getTitle(), savedComplaint.getId());
 
+        // Notify student about registered complaint
+        notificationService.notifyStudentComplaintCreated(student, savedComplaint.getTitle(), savedComplaint.getId());
+
         return savedComplaint;
     }
 
@@ -95,7 +98,7 @@ public class ComplaintService {
         if (request.getStatus() == ComplaintStatus.RESOLVED) {
             try {
                 feedbackService.createPendingFeedback(updatedComplaint, updatedComplaint.getStudent());
-                notificationService.notifyFeedbackRequested(updatedComplaint.getStudent(), updatedComplaint.getId());
+                notificationService.notifyFeedbackRequested(updatedComplaint.getStudent(), updatedComplaint.getTitle(), updatedComplaint.getId());
                 log.info("Feedback form created and notification sent to student: {}", updatedComplaint.getStudent().getEmail());
             } catch (Exception e) {
                 log.error("Failed to create feedback form: {}", e.getMessage());

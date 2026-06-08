@@ -81,9 +81,40 @@ public class NotificationService {
         }
     }
 
-    public void notifyFeedbackRequested(User student, Long complaintId) {
-        String message = "Please provide feedback for your complaint #" + complaintId;
-        createNotification(student, message);
+    public void notifyStudentComplaintCreated(User student, String complaintTitle, Long complaintId) {
+        String message = "Your complaint has been successfully registered (#" + complaintId + "): " + complaintTitle;
+
+        Notification n = Notification.builder()
+                .user(student)
+                .message(message)
+                .readFlag(false)
+                .build();
+        notificationRepository.save(n);
+
+        try {
+            emailService.sendStudentComplaintRegisteredNotification(student.getEmail(), complaintTitle, complaintId);
+            log.info("Formatted complaint registration email sent to student: {}", student.getEmail());
+        } catch (Exception e) {
+            log.warn("Email send failed for student {}: {}", student.getEmail(), e.getMessage());
+        }
+    }
+
+    public void notifyFeedbackRequested(User student, String complaintTitle, Long complaintId) {
+        String message = "Please provide feedback for your resolved complaint #" + complaintId;
+
+        Notification n = Notification.builder()
+                .user(student)
+                .message(message)
+                .readFlag(false)
+                .build();
+        notificationRepository.save(n);
+
+        try {
+            emailService.sendStudentFeedbackRequestNotification(student.getEmail(), complaintTitle, complaintId);
+            log.info("Formatted feedback request email sent to student: {}", student.getEmail());
+        } catch (Exception e) {
+            log.warn("Email send failed for student {}: {}", student.getEmail(), e.getMessage());
+        }
     }
 
     public void notifyFeedbackSubmitted(Long complaintId) {
