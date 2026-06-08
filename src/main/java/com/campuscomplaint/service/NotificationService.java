@@ -61,8 +61,23 @@ public class NotificationService {
     public void notifyComplaintCreated(String complaintTitle, Long complaintId) {
         List<User> faculty = userRepository.findByRole(Role.FACULTY);
         String message = "New complaint created (#" + complaintId + "): " + complaintTitle;
+
         for (User u : faculty) {
-            createNotification(u, message);
+            // Save notification in database
+            Notification n = Notification.builder()
+                    .user(u)
+                    .message(message)
+                    .readFlag(false)
+                    .build();
+            notificationRepository.save(n);
+
+            // Send formatted email notification
+            try {
+                emailService.sendComplaintNotification(u.getEmail(), complaintTitle, complaintId);
+                log.info("Formatted complaint notification email sent to: {}", u.getEmail());
+            } catch (Exception e) {
+                log.warn("Email send failed for {}: {}", u.getEmail(), e.getMessage());
+            }
         }
     }
 
